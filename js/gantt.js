@@ -46,9 +46,9 @@ export class Gantt {
             showCritical.addEventListener('change', () => this.render());
         }
 
-        // Подписка на изменения
+        // Подписка на изменения (без 'critical-change' чтобы избежать цикла)
         store.subscribe((action) => {
-            if (['add', 'update', 'delete', 'import', 'undo', 'redo', 'critical-change'].includes(action)) {
+            if (['add', 'update', 'delete', 'import', 'undo', 'redo'].includes(action)) {
                 this.render();
             }
         });

@@ -309,7 +309,7 @@ class Store {
             }
         });
         
-        this.notify('critical-change');
+        // Не вызываем notify здесь, чтобы избежать бесконечного цикла
         return Array.from(this.criticalTasks);
     }
 
@@ -323,7 +323,7 @@ class Store {
         } else {
             this.criticalTasks.add(id);
         }
-        this.notify('critical-change');
+        // Не уведомляем, чтобы избежать циклов
     }
 
     // ===== ПРОЕКТ =====
