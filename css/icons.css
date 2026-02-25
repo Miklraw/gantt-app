@@ -1,0 +1,79 @@
+/**
+ * Icons - Профессиональные иконки для интерфейса
+ * Используются вместо эмодзи для более строгого вида
+ */
+
+/* ===== ICON FONT BASE ===== */
+.icon {
+    display: inline-block;
+    font-style: normal;
+    font-weight: normal;
+    line-height: 1;
+    vertical-align: middle;
+}
+
+/* ===== HEADER ICONS ===== */
+.icon-logo::before { content: "▸"; font-size: 1.1em; }
+.icon-project::before { content: "◆"; font-size: 0.9em; }
+
+/* ===== TAB ICONS ===== */
+.icon-table::before { content: "☰"; font-size: 1.1em; }
+.icon-gantt::before { content: "▤"; font-size: 1.1em; }
+.icon-broadcast::before { content: "◈"; font-size: 1.1em; }
+.icon-settings::before { content: "⚙"; font-size: 1.1em; }
+
+/* ===== ACTION ICONS ===== */
+.icon-add::before { content: "+"; font-weight: bold; }
+.icon-delete::before { content: "×"; font-weight: bold; }
+.icon-edit::before { content: "✎"; }
+.icon-copy::before { content: "⧉"; }
+.icon-save::before { content: "⬇"; }
+.icon-share::before { content: "↗"; }
+.icon-refresh::before { content: "↻"; }
+.icon-undo::before { content: "↶"; }
+.icon-redo::before { content: "↷"; }
+
+/* ===== FILE ICONS ===== */
+.icon-excel::before { content: "▦"; color: #00c864; }
+.icon-pdf::before { content: "⬛"; color: #ff6400; }
+.icon-json::before { content: "{ }"; font-family: monospace; font-size: 0.85em; }
+
+/* ===== STATUS ICONS ===== */
+.icon-success::before { content: "✓"; color: var(--success); }
+.icon-warning::before { content: "△"; color: var(--warning); }
+.icon-error::before { content: "✕"; color: var(--error); }
+.icon-info::before { content: "ℹ"; color: var(--accent); }
+
+/* ===== PRIORITY ICONS ===== */
+.icon-priority-high::before { content: "●"; color: var(--priority-high); }
+.icon-priority-medium::before { content: "●"; color: var(--priority-medium); }
+.icon-priority-low::before { content: "●"; color: var(--priority-low); }
+
+/* ===== MISC ICONS ===== */
+.icon-theme::before { content: "◑"; }
+.icon-logout::before { content: "⤓"; }
+.icon-milestone::before { content: "◇"; }
+.icon-subscriber::before { content: "◉"; }
+.icon-send::before { content: "➤"; }
+.icon-test::before { content: "◎"; }
+.icon-quick::before { content: "⚡"; }
+
+/* ===== SECTION ICONS ===== */
+.icon-folder::before { content: "▣"; }
+.icon-behavior::before { content: "⬡"; }
+.icon-columns::before { content: "▤"; }
+.icon-types::before { content: "▮"; }
+.icon-export::before { content: "↔"; }
+.icon-telegram::before { content: "►"; }
+.icon-users::before { content: "👥"; }
+.icon-message::before { content: "✉"; }
+
+/* ===== VIEW ICONS ===== */
+.icon-calendar::before { content: "📅"; }
+.icon-clock::before { content: "⏰"; }
+.icon-urgent::before { content: "⚠"; }
+.icon-summary::before { content: "▤"; }
+
+/* ===== LIGHT THEME ADJUSTMENTS ===== */
+body.light-theme .icon-excel::before { color: #00a050; }
+body.light-theme .icon-pdf::before { color: #e05500; }
