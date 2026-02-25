@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gantt ULTRA PRO</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Toast Container -->
+    <div id="toastContainer" class="toast-container"></div>
+    
+    <!-- Login Screen -->
+    <div id="loginScreen" class="login-screen">
+        <div class="login-card">
+            <h1>🔐 Вход</h1>
+            <p>Введите учетные данные</p>
+            <div class="login-form">
+                <div>
+                    <label>Имя пользователя</label>
+                    <input type="text" id="loginUsername" placeholder="admin" autocomplete="username">
+                </div>
+                <div>
+                    <label>Пароль</label>
+                    <input type="password" id="loginPassword" placeholder="admin123" autocomplete="current-password">
+                </div>
+                <div id="loginError" class="login-error">Неверные данные</div>
+                <button id="loginBtn" class="login-btn">Войти</button>
+            </div>
+            <div class="login-hint">
+                <strong>Тестовые аккаунты:</strong><br>
+                admin / admin123<br>
+                manager / manager123
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div class="wrap" id="mainApp" style="display:none;">
+        <!-- Header -->
+        <header>
+            <div>
+                <h1 id="projectTitle">🚀 Gantt ULTRA PRO</h1>
+                <div class="note">Профессиональное управление шоу-мероприятиями</div>
+            </div>
+            <div class="header-actions">
+                <div class="history-controls">
+                    <button id="undoBtn" class="btn secondary" title="Отменить (Ctrl+Z)" disabled>↶</button>
+                    <button id="redoBtn" class="btn secondary" title="Повторить (Ctrl+Y)" disabled>↷</button>
+                </div>
+                <div class="tabs">
+                    <button class="tab-btn active" data-tab="table">📊 Таблица</button>
+                    <button class="tab-btn" data-tab="gantt">📈 Диаграмма</button>
+                    <button class="tab-btn" data-tab="broadcast">🔔 Рассылка</button>
+                    <button class="tab-btn" data-tab="settings">⚙️ Настройки</button>
+                </div>
+                <button id="themeToggleBtn" class="btn secondary" title="Тема">🌙</button>
+                <button id="logoutBtn" class="btn secondary">🚪 Выход</button>
+            </div>
+        </header>
+
+        <!-- Table Tab -->
+        <section id="tab-table" class="card">
+            <!-- Toolbar -->
+            <div class="row toolbar">
+                <button id="addRowBtn" class="btn">+ Работа</button>
+                <button id="addMilestoneBtn" class="btn secondary">◇ Веха</button>
+                <button id="duplicateBtn" class="btn ghost">📋 Дублировать</button>
+                <button id="shareBtn" class="btn share-btn">🔗 Поделиться</button>
+                <button id="saveBtn" class="btn save-btn">💾 Сохранить</button>
+                <div class="spacer"></div>
+                <button id="exportExcelBtn" class="btn ghost excel-btn">📊 Excel</button>
+                <button id="exportPdfBtn" class="btn ghost pdf-btn">📄 PDF</button>
+                <button id="refreshBtn" class="btn ghost refresh-btn">🔄 Обновить</button>
+            </div>
+
+            <!-- Filters -->
+            <div class="search-filter">
+                <input type="text" id="searchInput" placeholder="🔍 Поиск...">
+                <select id="filterType"><option value="">Все типы</option></select>
+                <select id="filterPriority">
+                    <option value="">Все приоритеты</option>
+                    <option value="high">🔴 Высокий</option>
+                    <option value="medium">🟡 Средний</option>
+                    <option value="low">🔵 Низкий</option>
+                </select>
+                <button id="clearFiltersBtn" class="btn ghost">Сбросить</button>
+                <span class="note" id="filteredCount">0 / 0</span>
+            </div>
+
+            <!-- Table -->
+            <div class="table-container">
+                <table id="taskTable" class="table-modern">
+                    <thead>
+                        <tr>
+                            <th style="width:40px">#</th>
+                            <th data-sort="type" style="width:120px">Тип</th>
+                            <th data-sort="task" style="width:200px">Работа</th>
+                            <th data-sort="start" style="width:140px">Начало</th>
+                            <th data-sort="end" style="width:140px">Конец</th>
+                            <th id="progressHeader" class="progress-col" style="width:100px;display:none">Прогресс</th>
+                            <th id="priorityHeader" class="priority-col" style="width:90px;display:none">Приоритет</th>
+                            <th style="width:120px">Ответственный</th>
+                            <th style="width:50px">✕</th>
+                        </tr>
+                    </thead>
+                    <tbody id="taskTableBody"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Gantt Tab -->
+        <section id="tab-gantt" class="card" style="display:none;">
+            <div class="row gantt-controls">
+                <button id="backToTableBtn" class="btn secondary">← Таблица</button>
+                <label class="note">
+                    Масштаб: 
+                    <select id="zoomSelect">
+                        <option value="12" selected>12 ч</option>
+                        <option value="24">24 ч</option>
+                        <option value="48">2 дн</option>
+                        <option value="168">Неделя</option>
+                    </select>
+                </label>
+                <label class="note toggle-label">
+                    <input type="checkbox" id="showDependencies" checked>
+                    <span>Зависимости</span>
+                </label>
+                <label class="note toggle-label">
+                    <input type="checkbox" id="showCriticalPath">
+                    <span>Крит. путь</span>
+                </label>
+            </div>
+            <div class="gantt-wrap" id="ganttContainer">
+                <div class="gantt" id="gantt">
+                    <div class="y-labels" id="yLabels"></div>
+                    <div class="timeline" id="timeline">
+                        <div class="time-header" id="timeHeader"></div>
+                        <svg id="depsSvg" class="deps-svg"></svg>
+                        <div class="gantt-grid" id="ganttGrid"></div>
+                        <div class="gantt-bars" id="ganttBars"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Broadcast Tab -->
+        <section id="tab-broadcast" class="card" style="display:none;">
+            <div class="broadcast-grid">
+                <!-- Левая колонка: Подписчики -->
+                <div class="broadcast-column">
+                    <h3>👥 Подписчики рассылки</h3>
+                    <div class="subscriber-add-form">
+                        <input type="text" id="newSubscriberName" placeholder="Имя подписчика" style="flex:1">
+                        <input type="text" id="newSubscriberChatId" placeholder="Chat ID" style="flex:1">
+                        <button id="addSubscriberBtn" class="btn">➕</button>
+                    </div>
+                    <div id="subscribersList" class="subscribers-list">
+                        <div class="note">Нет подписчиков</div>
+                    </div>
+                </div>
+
+                <!-- Правая колонка: Рассылка -->
+                <div class="broadcast-column">
+                    <h3>📤 Отправить сообщение</h3>
+                    <div class="broadcast-form">
+                        <label>Тема сообщения</label>
+                        <input type="text" id="broadcastSubject" placeholder="Тема">
+                        
+                        <label>Текст сообщения</label>
+                        <textarea id="broadcastMessage" rows="6" placeholder="Введите текст сообщения..."></textarea>
+                        
+                        <div class="broadcast-quick-messages">
+                            <span class="note">Быстрые сообщения:</span>
+                            <button class="btn ghost quick-msg" data-msg="summary">📊 Сводка проекта</button>
+                            <button class="btn ghost quick-msg" data-msg="reminder">⏰ Напоминание</button>
+                            <button class="btn ghost quick-msg" data-msg="urgent">🚨 Срочно</button>
+                        </div>
+                        
+                        <div class="broadcast-actions">
+                            <button id="sendToAllBtn" class="btn save-btn">📤 Разослать всем</button>
+                            <span id="broadcastCount" class="note">Подписчиков: 0</span>
+                        </div>
+                    </div>
+
+                    <h3 style="margin-top:24px">⚙️ Настройки бота</h3>
+                    <div class="setting-item">
+                        <label>Bot Token</label>
+                        <input type="text" id="telegramTokenBroadcast" placeholder="123456:ABC-DEF...">
+                        <label>Ваш Chat ID (для тестов)</label>
+                        <input type="text" id="telegramChatIdBroadcast" placeholder="-1001234567890">
+                        <button id="testTelegramBroadcastBtn" class="btn secondary">🧪 Тест</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Settings Tab -->
+        <section id="tab-settings" class="card" style="display:none;">
+            <div class="settings-grid">
+                <div>
+                    <h3>📁 Проект</h3>
+                    <div class="setting-item">
+                        <label>Название проекта</label>
+                        <div class="row">
+                            <input type="text" id="projectNameInput" placeholder="Мой проект">
+                            <button id="saveProjectNameBtn" class="btn">Сохранить</button>
+                        </div>
+                    </div>
+
+                    <h3>⚙️ Поведение</h3>
+                    <div class="setting-item">
+                        <label class="toggle-label" style="cursor:pointer">
+                            <input type="checkbox" id="continueFromLastCheck">
+                            <span>Продолжать от последней работы</span>
+                        </label>
+                        <div class="note" style="margin-top:8px">
+                            Новая работа начинается сразу после окончания предыдущей
+                        </div>
+                    </div>
+
+                    <h3>📊 Отображение столбцов</h3>
+                    <div class="setting-item">
+                        <label class="toggle-label" style="cursor:pointer">
+                            <input type="checkbox" id="showProgressCheck">
+                            <span>Показывать прогресс</span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <label class="toggle-label" style="cursor:pointer">
+                            <input type="checkbox" id="showPriorityCheck">
+                            <span>Показывать приоритет</span>
+                        </label>
+                    </div>
+
+                    <h3>🎨 Типы работ</h3>
+                    <div id="typeList" class="type-list"></div>
+                    <button id="addTypeBtn" class="btn ghost">+ Тип</button>
+                </div>
+
+                <div>
+                    <h3>📤 Экспорт / Импорт</h3>
+                    <div class="setting-item">
+                        <input type="file" id="importJsonInput" accept=".json" style="display:none">
+                        <button id="importJsonBtn" class="btn secondary">📥 Загрузить JSON</button>
+                        <button id="exportJsonBtn" class="btn secondary">📤 Скачать JSON</button>
+                    </div>
+
+                    <h3>🔔 Уведомления Telegram</h3>
+                    <div class="setting-item">
+                        <label>Bot Token</label>
+                        <input type="text" id="telegramToken" placeholder="123456:ABC-DEF...">
+                        <label>Chat ID</label>
+                        <input type="text" id="telegramChatId" placeholder="-1001234567890">
+                        <button id="testTelegramBtn" class="btn secondary">Тест</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Share Modal -->
+    <div id="shareModal" class="share-modal">
+        <div class="share-modal-content">
+            <h2>🔗 Поделиться расписанием</h2>
+            <p class="note">Ссылка на просмотр расписания</p>
+            <div class="share-link-container">
+                <input type="text" id="shareLinkInput" class="share-link-input" readonly>
+                <button id="copyShareLinkBtn" class="share-copy-btn">📋 Копировать</button>
+            </div>
+            <button id="closeShareModalBtn" class="btn secondary" style="margin-top:16px">Закрыть</button>
+        </div>
+    </div>
+
+    <!-- Shared View -->
+    <div id="sharedView" class="shared-view">
+        <div class="shared-header">
+            <div>
+                <h1 id="sharedTitle">📊 Расписание проекта</h1>
+                <p id="sharedDate"></p>
+            </div>
+            <div>
+                <button id="toggleSharedStyleBtn" class="btn secondary">🎨 Стиль</button>
+                <button id="downloadSharedBtn" class="btn">📥 Скачать</button>
+            </div>
+        </div>
+        <div class="shared-table-container">
+            <table class="shared-table">
+                <thead>
+                    <tr>
+                        <th>📅 Дата</th>
+                        <th>⏰ Время</th>
+                        <th>📦 Тип</th>
+                        <th>📝 Работа</th>
+                        <th>👤 Ответственный</th>
+                        <th>📊 Прогресс</th>
+                    </tr>
+                </thead>
+                <tbody id="sharedTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
+    <!-- App Modules -->
+    <script type="module" src="js/app.js"></script>
+</body>
+</html>
