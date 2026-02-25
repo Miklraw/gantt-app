@@ -122,12 +122,19 @@ export class Table {
         // Вычисляем длительность
         const duration = calcDuration(task.start, task.end);
 
+        // Генерируем options для типов
+        const types = store.getTypes();
+        const typeOptions = Object.keys(types).map(typeName => 
+            `<option value="${escapeHtml(typeName)}" ${task.type === typeName ? 'selected' : ''}>${escapeHtml(typeName)}</option>`
+        ).join('');
+
         tr.innerHTML = `
             <td>${task.id}</td>
             <td>
-                <input type="text" value="${escapeHtml(task.type)}" 
-                    class="type-input" data-field="type"
-                    placeholder="Тип" style="width:100%">
+                <select class="type-select" data-field="type" style="width:100%">
+                    <option value="">-- выберите --</option>
+                    ${typeOptions}
+                </select>
             </td>
             <td>
                 <input type="text" value="${escapeHtml(task.task)}" 
